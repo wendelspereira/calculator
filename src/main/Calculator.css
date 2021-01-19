@@ -1,0 +1,19 @@
+.calculator{
+    width: 235px;
+    height: 320px;
+    border-radius: 5px;
+    overflow: hidden;
+    
+    display: grid;
+    grid-template-columns: repeat(4, 25%);
+    grid-template-rows: 1fr repeat(5, 48px);
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at -4.17% 4.55%, #00ffff 0, #00ffff 16.67%, #00efff 33.33%, #0ccfed 50%, #30b0ce 66.67%, #3b94b1 83.33%, #407d97 100%);
+}
