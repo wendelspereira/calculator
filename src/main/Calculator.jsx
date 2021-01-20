@@ -17,10 +17,6 @@ export default class Calculator extends Component {
                 <Display value={100} />
                 {buttons}
             </div>
-
-            
-
-
         )
     }
 }
