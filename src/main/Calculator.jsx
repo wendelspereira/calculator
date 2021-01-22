@@ -18,28 +18,50 @@ export default class Calculator extends Component {
     addDigit(dig) {
         if (dig === ',' && this.state.displayValue.includes(',')) return
 
-        const clearDisplay = this.state.displayValue === '0'
-            || this.state.clearDisplay
+        let displayValue = this.state.displayValue
+        let clearDisplay = this.state.clearDisplay
+        const currentValue = this.state.currentValue
+        if (displayValue === '0' || clearDisplay) {
+            displayValue = ''
+            clearDisplay = false
+        }
 
-        const currentValue = clearDisplay ? '' : this.state.displayValue
-        const displayValue = currentValue + dig
-        this.setState({ displayValue, clearDisplay: false })
+        displayValue += dig
 
-        const defOp = this.state.operation
-        const value = this.state.values
+        this.state.values[currentValue] = displayValue
 
-        defOp ? value[1] = parseFloat(displayValue) :
-            value[0] = parseFloat(displayValue)
 
-        console.log(value[0], value[1], defOp)
-
+        this.setState({ displayValue, clearDisplay })
     }
 
     clearMemory() {
-        console.log(this.state)    }
+        this.setState(initialState)
+    }
 
     setOperation(operation) {
-        this.setState({ operation })
+        if (this.state.currentValue === 0) {
+            const clearDisplay = true
+            const currentValue = 1
+            this.setState({ operation, currentValue, clearDisplay })
+        } else if (this.state.currentValue === 1) {
+            const values = this.state.values
+            const displayValue = this.calc(values, operation)
+            const clearDisplay = true
+            const currentValue = 0
+            this.state.values[currentValue] = displayValue
+            this.setState({ displayValue, clearDisplay, currentValue })
+        }
+    }
+
+    calc(values, operation) {
+        const nums = values.map(s => parseFloat(s))
+        const [n1, n2] = nums
+        switch (operation) {
+            case '+': return n1 + n2;
+            case '-': return n1 - n2;
+            case '*': return n1 * n2;
+            case '/': return n1 / n2;
+        }
     }
 
     render() {
