@@ -6,8 +6,8 @@ import Button from '../Components/Button'
 const initialState = {
     displayValue: '0',
     operation: null,
-    values: [0, 0],
-    currentValue: 0,
+    values: [0, 1],
+    current: 0,
     clearDisplay: false
 }
 
@@ -17,45 +17,54 @@ export default class Calculator extends Component {
 
     addDigit(dig) {
         if (dig === ',' && this.state.displayValue.includes(',')) return
+        let clearDisplay = this.state.displayValue === '0' ||
+            this.state.clearDisplay
+        let currentValue = this.state.displayValue
+        if (clearDisplay) {
+            currentValue = ''
+            clearDisplay = !clearDisplay
+        }
+        const displayValue = currentValue + dig
+        let values = { ...this.state.values }
 
-        let displayValue = this.state.displayValue
-        let clearDisplay = this.state.clearDisplay
-        const currentValue = this.state.currentValue
-        if (displayValue === '0' || clearDisplay) {
-            displayValue = ''
-            clearDisplay = false
+        if (dig !== ',') {
+            const i = this.state.current
+            values[i] = parseFloat(displayValue)
         }
 
-        displayValue += dig
-
-        this.state.values[currentValue] = displayValue
-
-
-        this.setState({ displayValue, clearDisplay })
-    }
-
-    clearMemory() {
-        this.setState(initialState)
+        this.setState({
+            displayValue,
+            values,
+            clearDisplay,
+        })
     }
 
     setOperation(operation) {
-        if (this.state.currentValue === 0) {
-            const clearDisplay = true
-            const currentValue = 1
-            this.setState({ operation, currentValue, clearDisplay })
-        } else if (this.state.currentValue === 1) {
-            const values = this.state.values
-            const displayValue = this.calc(values, operation)
-            const clearDisplay = true
-            const currentValue = 0
-            this.state.values[currentValue] = displayValue
-            this.setState({ displayValue, clearDisplay, currentValue })
+        if (this.state.current === 0) {
+            this.setState({ operation, current: 1, clearDisplay: true })
+        } else {
+            const values = [...this.state.values]
+
+            const equals = operation === '='
+            const currentOperation = this.state.operation
+            values[0] = this.calc(values, currentOperation)
+            values[1] = 0
+            this.setState({
+                displayValue: values[0],
+                values,
+                current: 1,
+                operation: equals ? null : operation,
+                clearDisplay: !equals
+            })
         }
     }
 
+    clearMemory() {
+        this.setState({ ...initialState })
+    }
+
     calc(values, operation) {
-        const nums = values.map(s => parseFloat(s))
-        const [n1, n2] = nums
+        const [n1, n2] = values
         switch (operation) {
             case '+': return n1 + n2;
             case '-': return n1 - n2;
@@ -93,3 +102,67 @@ export default class Calculator extends Component {
         )
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// addDigit(dig) {
+//     if (dig === ',' && this.state.displayValue.includes(',')) return
+
+//     let displayValue = this.state.displayValue
+//     let clearDisplay = this.state.clearDisplay
+//     const currentValue = this.state.currentValue
+//     if (displayValue === '0' || clearDisplay) {
+//         displayValue = ''
+//         clearDisplay = false
+//     }
+
+//     displayValue += dig
+
+//     this.state.values[currentValue] = displayValue
+
+
+
+//     this.setState({ displayValue, clearDisplay })
+// }
+
+// clearMemory() {
+
+// }
+
+// setOperation(operation) {
+//     if (this.state.currentValue === 0) {
+//         const clearDisplay = true
+//         const currentValue = 1
+//         this.setState({ operation, currentValue, clearDisplay })
+//     } else if (this.state.currentValue === 1) {
+//         const values = this.state.values
+//         let displayValue
+//         if (values[0] !== null && values[1] !== null)
+//             displayValue = this.calc(values, operation)
+//         console.log(values)
+//         const clearDisplay = true
+//         this.state.values[0] = displayValue
+//         this.state.values[1] = null
+
+//         this.setState({ displayValue, operation, clearDisplay })
+//     }
+// }
+
+
